@@ -10,9 +10,8 @@ You will need some kind of local development running, for example Laravel Valet,
 - `cd beyong-test`
 - `composer install`
 - `cp .env.example .env`
-- Populate the WONDE_API_KEY in the .env with your token
+- Populate the WONDE_API_KEY and WONDE_SCHOOL_ID in the .env with your token and ID
 - `php artisan key:generate`
 - `npm install`
 - `npm run dev`
-- 
 
