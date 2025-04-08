@@ -4,7 +4,7 @@ namespace App\Contracts;
 
 interface SchoolDataServiceInterface
 {
-    public function getEmployee();
+    public function getEmployees(): array;
 
     public function getClassesForEmployee($employeeId);
 

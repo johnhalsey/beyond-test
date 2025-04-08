@@ -36,8 +36,8 @@ return [
     ],
 
     'wonde' => [
-        'api_key'   => env('WONDED_API_KEY'),
-        'school_id' => env('WONDED_SCHOOL_ID'),
+        'api_key'   => env('WONDE_API_KEY'),
+        'school_id' => env('WONDE_SCHOOL_ID'),
     ]
 
 ];
