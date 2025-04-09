@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\DTO\Lesson;
 use App\DTO\Employee;
 use App\DTO\EmployeeClass;
 use App\Adapters\WondeAdapter;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Contracts\SchoolDataServiceInterface;
 
@@ -27,7 +27,10 @@ readonly class WondeService implements SchoolDataServiceInterface
 
     public function getClassesForEmployee($employeeId, $page = 1, $accumulated = []): Collection
     {
-        $rawClasses = $this->paginate('classes', ['include' => 'employees,subject'], 'wonde-classes');
+        $rawClasses = $this->paginate('classes', [
+            'include'   => 'employees,subject',
+            'has_class' => true,
+        ], 'wonde-classes');
 
         $filtered = array_filter($rawClasses, function ($class) use ($employeeId) {
             return !empty(array_filter($class['employees']['data'], fn($e) => $e['id'] == $employeeId));
@@ -37,17 +40,20 @@ readonly class WondeService implements SchoolDataServiceInterface
             ->map(fn(array $class) => EmployeeClass::fromArray($class));
     }
 
-    public function getLessonsForEmployee($employeeId, $startAfter = null, $startBefore = null): Collection
+    public function getLessonsForEmployee($employeeId, Carbon $startAfter = null): Collection
     {
+        $startDateFormatted = $startAfter->format('Y-m-d');
+        $endDateFormatted = $startAfter->addDays(7)->format('Y-m-d');
+
         $rawLessons = $this->paginate('lessons', [
-            'include' => 'class,employee,employees',
-            'lessons_start_after' => $startAfter->format('Y-m-d'),
-            'lessons_start_before' => $startBefore->format('Y-m-d'),
-        ], 'wonde-lessons');
+            'include'              => 'class,employee,employees',
+            'lessons_start_after'  => $startDateFormatted,
+            'lessons_start_before' => $endDateFormatted,
+        ], 'wonde-lessons-' . $startDateFormatted);
 
         $filtered = array_filter($rawLessons, function ($lessons) use ($employeeId) {
-                (!empty(array_filter($lessons['emoloyee']['data'], fn($e) => $e['id'] == $employeeId)) ||
-                !empty(array_filter($lessons['emoloyees']['data'], fn($e) => $e['id'] == $employeeId)));
+            return (isset($lessons['employee']['data']) && $lessons['employee']['data']['id'] == $employeeId) ||
+                    (isset($lessons['employees']['data']) && !empty(array_filter($lessons['employees']['data'], fn($e) => $e['id'] == $employeeId)));
         });
 
         return collect($filtered)

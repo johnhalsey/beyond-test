@@ -15,10 +15,10 @@ class ClassResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
+            'id'          => $this->id,
+            'name'        => $this->name,
             'description' => $this->description,
-            'year_group' => $this->year_group,
+            'year_group'  => $this->yearGroup,
         ];
     }
 }

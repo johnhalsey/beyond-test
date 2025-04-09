@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,8 +17,8 @@ class LessonResource extends JsonResource
     {
         return [
             'id'       => $this->id,
-            'start_at' => $this->startAt,
-            'end_at'   => $this->endAt,
+            'start_at' => Carbon::parse($this->startAt)->format('d/m/Y H:i'),
+            'end_at'   => Carbon::parse($this->endAt)->format('d/m/Y H:i'),
             'class'    => new ClassResource($this->class)
         ];
     }

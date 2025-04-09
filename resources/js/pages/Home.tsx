@@ -75,13 +75,20 @@ export default function Home({ employees }: HomeProps) {
                     <input type="date" onChange={(e) => setStartAfter(e.target.value)}/>
                 </div>
 
-                {lessons.length > 0 && lessons.map((item: Lesson, index) => (
-                    <div className={'mt-1 border p-3 hover:bg-blue-100 cursor-pointer'}
-                         key={'class-' + item.id}
-                    >
-                        <div>{item.class.name} - {item.class.descripton}</div>
-                    </div>
-                ))}
+                {lessons.length > 0 && <table className={'w-full mt-3 border '}>
+                    <tr className={'border-b'}>
+                        <th className={'p-2 text-left'}>Lesson Date / Time</th>
+                        <th className={'p-2 text-left'}>Class Name</th>
+                    </tr>
+                    {lessons.map((item: Lesson, index) => (
+                        <tr className={'border-b hover:bg-blue-100 cursor-pointer'}
+                             key={'class-' + item.id}
+                        >
+                            <td className={'p-2'}>{item.start_at}</td>
+                            <td className={'p-2'}>{item.class.name}</td>
+                        </tr>
+                    ))}
+                </table>}
 
                 {lessons.length == 0 && !loading && <div className={'mt-1 text-center'}>
                     There are no lessons for that week.  Please choose another date.

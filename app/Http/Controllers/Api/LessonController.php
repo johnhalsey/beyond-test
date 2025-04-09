@@ -12,11 +12,9 @@ class LessonController extends Controller
 {
     public function index(Request $request, string $employeeId): AnonymousResourceCollection
     {
-        $startAfter = $request->has('startAfter') ? $request->get('startAfter') : Carbon::now();
-        $startAfter = Carbon::parse($startAfter);
-        $startBefore = $startAfter->addDays(7);
+        $startAfter = $request->has('startAfter') ? Carbon::parse($request->get('startAfter')) : Carbon::now();
 
-        $lessons = $this->schoolDataServiceInterface->getLessonsForEmployee($employeeId, $startAfter, $startBefore);
+        $lessons = $this->schoolDataServiceInterface->getLessonsForEmployee($employeeId, $startAfter);
 
         return LessonResource::collection($lessons);
     }

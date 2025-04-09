@@ -8,7 +8,7 @@ class EmployeeClass
         public string $id,
         public string $name,
         public string $description,
-        public string $year_group,
+        public string $yearGroup,
     ) {}
 
     public static function fromArray(array $data): self

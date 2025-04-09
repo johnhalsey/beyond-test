@@ -2,6 +2,7 @@
 
 namespace App\Contracts;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 interface SchoolDataServiceInterface
@@ -10,5 +11,5 @@ interface SchoolDataServiceInterface
 
     public function getClassesForEmployee($employeeId): Collection;
 
-    public function getLessonsForEmployee($employeeId, $startAfter = null, $startBefore = null): Collection;
+    public function getLessonsForEmployee($employeeId, Carbon $startAfter = null): Collection;
 }
