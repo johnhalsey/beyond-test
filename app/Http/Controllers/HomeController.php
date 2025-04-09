@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Contracts\SchoolDataServiceInterface;
 
 class HomeController extends Controller
 {
     public function __construct(private readonly SchoolDataServiceInterface $schoolDataServiceInterface)
     {
-
     }
 
     public function index()

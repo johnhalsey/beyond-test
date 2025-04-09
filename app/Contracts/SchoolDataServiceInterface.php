@@ -2,11 +2,13 @@
 
 namespace App\Contracts;
 
+use Illuminate\Support\Collection;
+
 interface SchoolDataServiceInterface
 {
-    public function getEmployees(): array;
+    public function getEmployees(): Collection;
 
-    public function getClassesForEmployee($employeeId);
+    public function getClassesForEmployee($employeeId): Collection;
 
-    public function getClassLessonsForEmployee($classId, $employeeId, $startDate = null);
+    public function getClassLessonsForEmployee($classId, $employeeId, $startDate = null): Collection;
 }
