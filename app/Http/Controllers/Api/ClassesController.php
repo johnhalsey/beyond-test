@@ -9,10 +9,6 @@ use App\Contracts\SchoolDataServiceInterface;
 
 class ClassesController extends Controller
 {
-    public function __construct(private readonly SchoolDataServiceInterface $schoolDataServiceInterface)
-    {
-    }
-
     public function index(string $employeeId)
     {
         try{

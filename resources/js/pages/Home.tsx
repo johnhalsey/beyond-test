@@ -13,30 +13,36 @@ type HomeProps = {
     employees: Employee[];
 };
 
-type EmployeeClass = {
+type Lesson = {
     'id': string,
-    'name': string,
-    'description': string,
-    'year_group': string
+    'start_at': string,
+    'end_at': string,
+    'class': object
 }
 export default function Home({ employees }: HomeProps) {
 
     const [employeeId, setEmployeeId] = useState<string>('');
-    const [classes, setClasses] = useState<EmployeeClass []>([]);
+    const [lessons, setLessons] = useState<Lesson []>([]);
+    const [startAfter, setStartAfter] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
         // once the employee ID is populated, get the classes
-        if (employeeId != '') {
-            getClassesForEmployee();
+        if (employeeId != '' && startAfter != '') {
+            getLessonsForEmployee();
         }
 
-    }, [employeeId]);
+    }, [employeeId, startAfter]);
 
-    function getClassesForEmployee() {
-        axios.get(route('api.classes.index', { 'employeeId': employeeId }))
+    function getLessonsForEmployee() {
+        setLoading(true)
+        axios.get(route('api.lessons.index', { 'employeeId': employeeId }), {
+            params: {startAfter: startAfter}
+        })
             .then((response) => {
                 console.log(response.data)
-                setClasses(response.data.data);
+                setLessons(response.data.data);
+                setLoading(false)
             })
             .catch((error) => {
                 console.log('there was an error');
@@ -64,13 +70,26 @@ export default function Home({ employees }: HomeProps) {
                     </select>
                 </div>
 
-                {classes.length > 0 && classes.map((item: EmployeeClass, index) => (
+                <div className="grid grid-cols-2 gap-2 mt-4 border p-5">
+                    <label htmlFor="employee-select">Please select a date</label>
+                    <input type="date" onChange={(e) => setStartAfter(e.target.value)}/>
+                </div>
+
+                {lessons.length > 0 && lessons.map((item: Lesson, index) => (
                     <div className={'mt-1 border p-3 hover:bg-blue-100 cursor-pointer'}
                          key={'class-' + item.id}
                     >
-                        <div>{item.name} - {item.description}</div>
+                        <div>{item.class.name} - {item.class.descripton}</div>
                     </div>
                 ))}
+
+                {lessons.length == 0 && !loading && <div className={'mt-1 text-center'}>
+                    There are no lessons for that week.  Please choose another date.
+                </div>}
+
+                {loading && employeeId != '' && startAfter != '' && <div className={'mt-1 text-center'}>
+                    Loading...
+                </div>}
             </div>
         </>
     );

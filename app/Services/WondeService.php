@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\DTO\Lesson;
 use App\DTO\Employee;
 use App\DTO\EmployeeClass;
 use App\Adapters\WondeAdapter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Contracts\SchoolDataServiceInterface;
 
@@ -35,9 +37,21 @@ readonly class WondeService implements SchoolDataServiceInterface
             ->map(fn(array $class) => EmployeeClass::fromArray($class));
     }
 
-    public function getClassLessonsForEmployee($classId, $employeeId, $startDate = null): Collection
+    public function getLessonsForEmployee($employeeId, $startAfter = null, $startBefore = null): Collection
     {
-        // ignore for now
+        $rawLessons = $this->paginate('lessons', [
+            'include' => 'class,employee,employees',
+            'lessons_start_after' => $startAfter->format('Y-m-d'),
+            'lessons_start_before' => $startBefore->format('Y-m-d'),
+        ], 'wonde-lessons');
+
+        $filtered = array_filter($rawLessons, function ($lessons) use ($employeeId) {
+                (!empty(array_filter($lessons['emoloyee']['data'], fn($e) => $e['id'] == $employeeId)) ||
+                !empty(array_filter($lessons['emoloyees']['data'], fn($e) => $e['id'] == $employeeId)));
+        });
+
+        return collect($filtered)
+            ->map(fn(array $lesson) => Lesson::fromArray($lesson));
     }
 
     private function paginate(string $resource, array $params = [], string $cachePrefix = '', int $page = 1, array $accumulated = []): array

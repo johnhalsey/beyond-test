@@ -10,5 +10,5 @@ interface SchoolDataServiceInterface
 
     public function getClassesForEmployee($employeeId): Collection;
 
-    public function getClassLessonsForEmployee($classId, $employeeId, $startDate = null): Collection;
+    public function getLessonsForEmployee($employeeId, $startAfter = null, $startBefore = null): Collection;
 }
