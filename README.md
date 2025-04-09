@@ -15,3 +15,13 @@ You will need some kind of local development running, for example Laravel Valet,
 - `npm install`
 - `npm run dev`
 
+## Decisions made
+
+I have not implemented any app authentication, largely to save time.  
+Currently anyone can access the app, and choose an employee of the school to view the classes and lessons.  
+
+in the real world, I would expect a user to have to log in, and be linked to an employee with an `employee_id` in the users table that would likely be set as pat of the registration process, or as part of an invitation from someone who **does** have access to all employees of the school.
+
+## Running Tests
+
+The test suite can be run for this application by running `php artisan test`
