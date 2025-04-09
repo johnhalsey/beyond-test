@@ -25,19 +25,11 @@ readonly class WondeService implements SchoolDataServiceInterface
             ->map(fn(array $employee) => Employee::fromArray($employee));
     }
 
-    public function getClassesForEmployee($employeeId, $page = 1, $accumulated = []): Collection
+    public function getClass(string $classId): EmployeeClass
     {
-        $rawClasses = $this->paginate('classes', [
-            'include'   => 'employees,subject',
-            'has_class' => true,
-        ], 'wonde-classes');
+       $response = $this->adapter->get("classes/$classId", ['include' => 'students'])->json();
 
-        $filtered = array_filter($rawClasses, function ($class) use ($employeeId) {
-            return !empty(array_filter($class['employees']['data'], fn($e) => $e['id'] == $employeeId));
-        });
-
-        return collect($filtered)
-            ->map(fn(array $class) => EmployeeClass::fromArray($class));
+        return new EmployeeClass($response);
     }
 
     public function getLessonsForEmployee($employeeId, Carbon $startAfter = null): Collection

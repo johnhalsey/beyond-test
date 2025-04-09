@@ -9,6 +9,7 @@ class EmployeeClass
         public string $name,
         public string $description,
         public string $yearGroup,
+        public array $students,
     ) {}
 
     public static function fromArray(array $data): self
@@ -18,6 +19,8 @@ class EmployeeClass
             $data['name'] ?? '',
             $data['description'] ?? '',
             $data['year_group'] ?? '',
+            $data['students'] ? Student::manyFromArray($data['students']['data']) : [],
+
         );
     }
 }
