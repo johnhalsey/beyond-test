@@ -11,5 +11,5 @@ interface SchoolDataServiceInterface
 
     public function getClass(string $classId): Collection;
 
-    public function getLessonsForEmployee($employeeId, Carbon $startAfter = null): Collection;
+    public function getLessonsForEmployee(string $employeeId, Carbon $startAfter): Collection;
 }
