@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import { useEffect, useState } from 'react';
 
 type Employee = {
     id: string;
@@ -14,34 +13,33 @@ type HomeProps = {
 };
 
 type Lesson = {
-    id: string,
-    start_at: string,
-    end_at: string,
-    class: LessonClass
-}
+    id: string;
+    start_at: string;
+    end_at: string;
+    class: LessonClass;
+};
 
 type Student = {
-    id: string,
-    forename: string,
-    surname: string
-}
+    id: string;
+    forename: string;
+    surname: string;
+};
 
 type LessonClass = {
-    id: string,
-    name: string,
-    description: string,
-    year_group: string,
-    students: Student[]
-}
+    id: string;
+    name: string;
+    description: string;
+    year_group: string;
+    students: Student[];
+};
 export default function Home({ employees }: HomeProps) {
-
     const [employeeId, setEmployeeId] = useState<string>('');
     const [lessons, setLessons] = useState<Lesson[]>([]);
-    const [startAfter, setStartAfter] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(true)
-    const [loadingClass, setLoadingClass] = useState<boolean>(true)
-    const [lessonClass, setLessonClass] = useState<LessonClass|null>(null)
-    const [classId, setClassId] = useState<string>('')
+    const [startAfter, setStartAfter] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [loadingClass, setLoadingClass] = useState<boolean>(false);
+    const [lessonClass, setLessonClass] = useState<LessonClass | null>(null);
+    const [classId, setClassId] = useState<string>('');
 
     useEffect(() => {
         // once the employee ID is populated, get the classes
@@ -50,36 +48,38 @@ export default function Home({ employees }: HomeProps) {
         }
 
         if (classId != '') {
-            getClass()
+            getClass();
         }
-
     }, [employeeId, startAfter, classId]);
 
     function getLessonsForEmployee() {
-        setLoading(true)
-        setLessons([])
-        axios.get(route('api.lessons.index', { 'employeeId': employeeId }), {
-            params: {startAfter: startAfter}
-        })
-            .then((response) => {
-                console.log(response.data)
-                setLessons(response.data.data);
-                setLoading(false)
+        setLoading(true);
+        setLessons([]);
+        axios
+            .get(route('api.lessons.index', { employeeId: employeeId }), {
+                params: { startAfter: startAfter },
             })
-            .catch((error) => {
-                console.log('there was an error');
-                console.log(error);
+            .then((response) => {
+                setLessons(response.data.data);
+                setLoading(false);
+            })
+            .catch(() => {
+                alert('there was an error retrieving lessons, please try again.');
             });
     }
 
-    function getClass () {
-        setLoadingClass(true)
-        setLessonClass(null)
-        axios.get(route('api.classes.show', {'classId': classId}))
+    function getClass() {
+        setLoadingClass(true);
+        setLessonClass(null);
+        axios
+            .get(route('api.classes.show', { classId: classId }))
             .then((response) => {
-                setLessonClass(response.data.data)
-                setLoadingClass(false)
+                setLessonClass(response.data.data);
+                setLoadingClass(false);
             })
+            .catch(() => {
+                alert('There was an error retrieving the students for this class, please try again.');
+            });
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -89,8 +89,8 @@ export default function Home({ employees }: HomeProps) {
     return (
         <>
             <div className="container mx-auto">
-                <h1 className="text-2xl text-center mt-5">View My Lessons</h1>
-                <div className="grid grid-cols-2 gap-2 mt-4 border p-5">
+                <h1 className="mt-5 text-center text-2xl">View My Lessons</h1>
+                <div className="mt-4 grid grid-cols-2 gap-2 border p-5">
                     <label htmlFor="employee-select">Please select your name</label>
                     <select id="employee-select" className={'border p-3'} onChange={handleChange} value={employeeId}>
                         <option value="">-- Select an employee --</option>
@@ -102,36 +102,67 @@ export default function Home({ employees }: HomeProps) {
                     </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 mt-4 border p-5">
+                <div className="mt-4 grid grid-cols-2 gap-2 border p-5">
                     <label htmlFor="employee-select">Please select a date</label>
                     <div className={'border p-3'}>
-                    <input type="date" onChange={(e) => setStartAfter(e.target.value)}/>
+                        <input type="date" onChange={(e) => setStartAfter(e.target.value)} />
                     </div>
                 </div>
 
-                {lessons.length > 0 && <table className={'w-full mt-3 border '}>
-                    <tr className={'border-b'}>
-                        <th className={'p-2 text-left'}>Lesson Date / Time</th>
-                        <th className={'p-2 text-left'}>Class Name</th>
-                    </tr>
-                    {lessons.map((item: Lesson, index) => (
-                        <tr className={'border-b hover:bg-blue-100 cursor-pointer'}
-                             key={'class-' + item.id}
-                            onClick={() => setClassId(item.class.id)}
-                        >
-                            <td className={'p-2'}>{item.start_at}</td>
-                            <td className={'p-2'}>{item.class.name}</td>
-                        </tr>
-                    ))}
-                </table>}
+                <div className={'mt-3 grid gap-2 px-2 sm:grid-cols-2 sm:px-0'}>
+                    <div>
+                        {lessons.length > 0 && (
+                            <table className={'w-full border'}>
+                                <thead>
+                                    <tr className={'border-b'}>
+                                        <th className={'p-2 text-left'}>Lesson Date / Time</th>
+                                        <th className={'p-2 text-left'}>Class Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {lessons.map((item: Lesson, index) => (
+                                        <tr
+                                            className={classId == item.class.id ? 'bg-blue-200' : '' + 'cursor-pointer border-b hover:bg-blue-100'}
+                                            key={'class-' + item.id}
+                                            onClick={() => setClassId(item.class.id)}
+                                        >
+                                            <td className={'p-2'}>{item.start_at}</td>
+                                            <td className={'p-2'}>{item.class.name}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
 
-                {lessons.length == 0 && !loading && <div className={'mt-1 text-center'}>
-                    There are no lessons for that week.  Please choose another date.
-                </div>}
+                        {lessons.length == 0 && !loading && (
+                            <div className={'mt-1 text-center'}>There are no lessons for that day. Please choose another date.</div>
+                        )}
 
-                {loading && employeeId != '' && startAfter != '' && <div className={'mt-1 text-center'}>
-                    Loading...
-                </div>}
+                        {loading && employeeId != '' && startAfter != '' && <div className={'mt-1 text-center'}>Loading Lessons...</div>}
+                    </div>
+
+                    <div>
+                        {employeeId && lessons.length > 0 && !loadingClass && !lessonClass && (
+                            <div className={'border p-3'}>Select a lesson to display the students</div>
+                        )}
+
+                        {!loadingClass && lessonClass && (
+                            <div className={'mb-3 font-bold'}>
+                                <h2>Students in {lessonClass.name}</h2>
+                            </div>
+                        )}
+
+                        {!loadingClass &&
+                            lessonClass &&
+                            lessonClass.students.data.map((student: Student, index) => (
+                                <div key={'lesson-class-students-' + student.id}>
+                                    {student.forename} {student.surname}
+                                </div>
+                            ))}
+
+                        {loadingClass && <div>Loading Students...</div>}
+                    </div>
+                </div>
             </div>
         </>
     );

@@ -7,8 +7,6 @@ class EmployeeClass
     public function __construct(
         public string $id,
         public string $name,
-        public string $description,
-        public string $yearGroup,
         public array $students,
     ) {}
 
@@ -17,10 +15,7 @@ class EmployeeClass
         return new self(
             $data['id'],
             $data['name'] ?? '',
-            $data['description'] ?? '',
-            $data['year_group'] ?? '',
-            $data['students'] ? Student::manyFromArray($data['students']['data']) : [],
-
+            isset($data['students']) ? Student::manyFromArray($data['students']['data']) : [],
         );
     }
 }

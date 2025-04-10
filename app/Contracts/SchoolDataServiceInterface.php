@@ -3,7 +3,6 @@
 namespace App\Contracts;
 
 use Carbon\Carbon;
-use App\DTO\EmployeeClass;
 use Illuminate\Support\Collection;
 
 interface SchoolDataServiceInterface

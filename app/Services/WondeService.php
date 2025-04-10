@@ -5,10 +5,8 @@ namespace App\Services;
 use Carbon\Carbon;
 use App\DTO\Lesson;
 use App\DTO\Employee;
-use App\DTO\EmployeeClass;
 use App\Adapters\WondeAdapter;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Contracts\SchoolDataServiceInterface;
 
