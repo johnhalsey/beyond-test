@@ -15,7 +15,7 @@ class WondeAdapter
     public function __construct()
     {
         $this->setApiKey();
-        $this->baseUrl();
+        $this->setBaseUrl();
     }
 
     private function setApiKey()
@@ -23,7 +23,7 @@ class WondeAdapter
         $this->apiKey = config('services.wonde.api_key');
     }
 
-    private function baseUrl()
+    private function setBaseUrl()
     {
         $this->baseUrl = 'https://api.wonde.com/v1.0/schools/' . config('services.wonde.school_id') . '/';
     }
