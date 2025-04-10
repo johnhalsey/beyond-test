@@ -8,6 +8,7 @@ use App\DTO\Employee;
 use App\DTO\EmployeeClass;
 use App\Adapters\WondeAdapter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Contracts\SchoolDataServiceInterface;
 
@@ -25,17 +26,15 @@ readonly class WondeService implements SchoolDataServiceInterface
             ->map(fn(array $employee) => Employee::fromArray($employee));
     }
 
-    public function getClass(string $classId): EmployeeClass
+    public function getClass(string $classId): Collection
     {
-       $response = $this->adapter->get("classes/$classId", ['include' => 'students'])->json();
-
-        return new EmployeeClass($response);
+       return $this->adapter->get("classes/$classId", ['include' => 'students'])->collect();
     }
 
     public function getLessonsForEmployee($employeeId, Carbon $startAfter = null): Collection
     {
         $startDateFormatted = $startAfter->format('Y-m-d');
-        $endDateFormatted = $startAfter->addDays(7)->format('Y-m-d');
+        $endDateFormatted = $startAfter->addDay()->format('Y-m-d');
 
         $rawLessons = $this->paginate('lessons', [
             'include'              => 'class,employee,employees',

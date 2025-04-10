@@ -18,7 +18,7 @@ class ClassResource extends JsonResource
             'id'          => $this->id,
             'name'        => $this->name,
             'description' => $this->description,
-            'year_group'  => $this->yearGroup,
+            'students'    => $this->when($this->students, $this->students, [])
         ];
     }
 }

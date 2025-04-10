@@ -8,5 +8,5 @@ use Illuminate\Support\Facades\Http;
 
 class ClassControllerTest extends TestCase
 {
-    
+
 }

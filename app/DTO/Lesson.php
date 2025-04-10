@@ -17,7 +17,7 @@ class Lesson
             $data['id'],
             $data['start_at']['date'] ?? '',
             $data['end_at']['date'] ?? '',
-            $data['class']['data'] ? EmployeeClass::fromArray($data['class']['data']) : '',
+            isset($data['class']['data']) ? EmployeeClass::fromArray($data['class']['data']) : '',
         );
     }
 

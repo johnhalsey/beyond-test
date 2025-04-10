@@ -14,17 +14,34 @@ type HomeProps = {
 };
 
 type Lesson = {
-    'id': string,
-    'start_at': string,
-    'end_at': string,
-    'class': object
+    id: string,
+    start_at: string,
+    end_at: string,
+    class: LessonClass
+}
+
+type Student = {
+    id: string,
+    forename: string,
+    surname: string
+}
+
+type LessonClass = {
+    id: string,
+    name: string,
+    description: string,
+    year_group: string,
+    students: Student[]
 }
 export default function Home({ employees }: HomeProps) {
 
     const [employeeId, setEmployeeId] = useState<string>('');
-    const [lessons, setLessons] = useState<Lesson []>([]);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
     const [startAfter, setStartAfter] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(true)
+    const [loadingClass, setLoadingClass] = useState<boolean>(true)
+    const [lessonClass, setLessonClass] = useState<LessonClass|null>(null)
+    const [classId, setClassId] = useState<string>('')
 
     useEffect(() => {
         // once the employee ID is populated, get the classes
@@ -32,10 +49,15 @@ export default function Home({ employees }: HomeProps) {
             getLessonsForEmployee();
         }
 
-    }, [employeeId, startAfter]);
+        if (classId != '') {
+            getClass()
+        }
+
+    }, [employeeId, startAfter, classId]);
 
     function getLessonsForEmployee() {
         setLoading(true)
+        setLessons([])
         axios.get(route('api.lessons.index', { 'employeeId': employeeId }), {
             params: {startAfter: startAfter}
         })
@@ -48,6 +70,16 @@ export default function Home({ employees }: HomeProps) {
                 console.log('there was an error');
                 console.log(error);
             });
+    }
+
+    function getClass () {
+        setLoadingClass(true)
+        setLessonClass(null)
+        axios.get(route('api.classes.show', {'classId': classId}))
+            .then((response) => {
+                setLessonClass(response.data.data)
+                setLoadingClass(false)
+            })
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -72,7 +104,9 @@ export default function Home({ employees }: HomeProps) {
 
                 <div className="grid grid-cols-2 gap-2 mt-4 border p-5">
                     <label htmlFor="employee-select">Please select a date</label>
+                    <div className={'border p-3'}>
                     <input type="date" onChange={(e) => setStartAfter(e.target.value)}/>
+                    </div>
                 </div>
 
                 {lessons.length > 0 && <table className={'w-full mt-3 border '}>
@@ -83,6 +117,7 @@ export default function Home({ employees }: HomeProps) {
                     {lessons.map((item: Lesson, index) => (
                         <tr className={'border-b hover:bg-blue-100 cursor-pointer'}
                              key={'class-' + item.id}
+                            onClick={() => setClassId(item.class.id)}
                         >
                             <td className={'p-2'}>{item.start_at}</td>
                             <td className={'p-2'}>{item.class.name}</td>
